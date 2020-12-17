@@ -1,24 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import { Col, Container, Row } from "react-bootstrap";
+import CardCurrency from "./components/CardCurrency";
+import Formulario from "./components/Formulario";
+import Header from "./components/Header";
+import { BASE_URL } from "./utils/api";
 
 function App() {
+  const [cripto, setCripto] = useState("BTC");
+  const [data, setData] = useState({});
+  const tipoMoneda = "USD";
+
+  useEffect(() => {
+    const searchData = async () => {
+      const url = `${BASE_URL}${cripto}${tipoMoneda}/ticker.json`;
+      const response = await fetch(url);
+      const ticker = await response.json();
+      setData(ticker);
+      console.log(ticker);
+    };
+    searchData();
+  }, [cripto]);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Header></Header>
+      <Container>
+        <Row>
+          <Col>
+            <Formulario setCurrency={setCripto}></Formulario>
+          </Col>
+        </Row>
+        <Row>
+          <br/>
+        </Row>
+        <Row>
+          <CardCurrency
+            currency={cripto}
+            data={data}
+            tipoMoneda={tipoMoneda}
+          ></CardCurrency>
+        </Row>
+      </Container>
+    </>
   );
 }
 
